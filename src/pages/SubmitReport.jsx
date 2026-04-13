@@ -20,14 +20,13 @@ const ICON_MAP = {
 
 // ── Success Toast Overlay ────────────────────────────────────────────────────
 const SuccessToast = ({ onClose, onNavigate }) => {
+    const { t } = useLanguage();
     const [visible, setVisible] = useState(false);
     const [countdown, setCountdown] = useState(6);
 
     useEffect(() => {
-        // Mount animation
         requestAnimationFrame(() => setVisible(true));
 
-        // Countdown timer
         const interval = setInterval(() => {
             setCountdown(prev => {
                 if (prev <= 1) {
@@ -48,7 +47,6 @@ const SuccessToast = ({ onClose, onNavigate }) => {
                 "relative bg-white rounded-3xl shadow-2xl max-w-sm w-full overflow-hidden transition-all duration-500",
                 visible ? "opacity-100 scale-100 translate-y-0" : "opacity-0 scale-90 translate-y-8"
             )}>
-                {/* Progress bar */}
                 <div className="absolute top-0 left-0 right-0 h-1 bg-slate-100">
                     <div
                         className="h-full bg-green-500 transition-all duration-1000 ease-linear"
@@ -56,7 +54,6 @@ const SuccessToast = ({ onClose, onNavigate }) => {
                     />
                 </div>
 
-                {/* Close button */}
                 <button
                     onClick={onClose}
                     className="absolute top-4 right-4 p-1.5 hover:bg-slate-100 rounded-full transition-colors"
@@ -65,7 +62,6 @@ const SuccessToast = ({ onClose, onNavigate }) => {
                 </button>
 
                 <div className="p-8 text-center">
-                    {/* Animated success icon */}
                     <div className="relative w-20 h-20 mx-auto mb-5">
                         <div className="absolute inset-0 bg-green-100 rounded-full animate-ping opacity-40" />
                         <div className="relative w-20 h-20 bg-green-100 rounded-full flex items-center justify-center shadow-lg shadow-green-200">
@@ -73,47 +69,44 @@ const SuccessToast = ({ onClose, onNavigate }) => {
                         </div>
                     </div>
 
-                    <h2 className="text-2xl font-bold text-slate-900 mb-2">Report Submitted!</h2>
+                    <h2 className="text-2xl font-bold text-slate-900 mb-2">{t('report.submitted')}</h2>
                     <p className="text-slate-500 text-sm leading-relaxed mb-1">
-                        Your emergency report has been received by
+                        {t('report.received')}
                     </p>
                     <p className="text-slate-800 font-bold text-sm mb-5">
                         Unit Alpha-1 · Sector 4 Response Team
                     </p>
 
-                    {/* Status badges */}
                     <div className="flex gap-2 justify-center mb-6 flex-wrap">
-                        <span className="bg-green-100 text-green-700 text-xs font-bold px-3 py-1 rounded-full">✓ Received</span>
-                        <span className="bg-blue-100 text-blue-700 text-xs font-bold px-3 py-1 rounded-full">📡 Transmitted</span>
-                        <span className="bg-orange-100 text-orange-700 text-xs font-bold px-3 py-1 rounded-full">🚑 Units Alerted</span>
+                        <span className="bg-green-100 text-green-700 text-xs font-bold px-3 py-1 rounded-full">{t('report.statusBadges')[0]}</span>
+                        <span className="bg-blue-100 text-blue-700 text-xs font-bold px-3 py-1 rounded-full">{t('report.statusBadges')[1]}</span>
+                        <span className="bg-orange-100 text-orange-700 text-xs font-bold px-3 py-1 rounded-full">{t('report.statusBadges')[2]}</span>
                     </div>
 
-                    {/* Next steps */}
                     <div className="bg-blue-50 p-4 rounded-xl border border-blue-100 mb-6 text-left">
                         <h4 className="font-bold text-blue-800 text-xs mb-2 flex items-center gap-1.5">
                             <ShieldCheck className="w-3.5 h-3.5" />
-                            What to do next
+                            {t('report.nextSteps')}
                         </h4>
                         <ul className="text-xs text-blue-700 space-y-1.5 list-disc pl-4">
-                            <li>Stay near your location if it is safe to do so</li>
-                            <li>Keep your phone line open for verification calls</li>
-                            <li>Update the report if the situation changes</li>
+                            <li>{t('report.stayLocation')}</li>
+                            <li>{t('report.keepLine')}</li>
+                            <li>{t('report.updateReport')}</li>
                         </ul>
                     </div>
 
-                    {/* CTA buttons */}
                     <div className="flex gap-3">
                         <button 
                             onClick={onClose}
                             className="flex-1 py-3 border-2 border-slate-200 text-slate-600 font-bold rounded-xl hover:bg-slate-50 transition-all text-sm"
                         >
-                            Submit Another
+                            {t('report.submitAnother')}
                         </button>
                         <button 
                             onClick={onNavigate}
                             className="flex-1 py-3 bg-slate-900 text-white font-bold rounded-xl hover:bg-slate-800 transition-all shadow-lg text-sm"
                         >
-                            Dashboard ({countdown}s)
+                            {t('report.goDashboard')} ({countdown}s)
                         </button>
                     </div>
                 </div>
@@ -125,6 +118,7 @@ const SuccessToast = ({ onClose, onNavigate }) => {
 const SubmitReport = () => {
     const navigate = useNavigate();
     const { addIncident, currentUser } = useAppState();
+    const { t } = useLanguage();
     const [step, setStep] = useState(1);
     const [submitting, setSubmitting] = useState(false);
     const [showSuccess, setShowSuccess] = useState(false);
@@ -137,13 +131,15 @@ const SubmitReport = () => {
     });
 
 
+    const getSeverityLabel = (id) => t(`severity.${id}`) || id;
+    const getIncidentLabel = (id) => t(`incidentTypes.${id}`) || id;
+
     const SEVERITY_OPTIONS = [
-        { id: 'LOW', label: 'Needs Attention', desc: 'Property damage, blocked roads, non-urgent.', color: 'bg-yellow-100 text-yellow-800 border-yellow-300' },
-        { id: 'HIGH', label: 'Urgent', desc: 'Injuries, active fire, major hazard.', color: 'bg-orange-100 text-orange-800 border-orange-300' },
-        { id: 'CRITICAL', label: 'Life-Threatening', desc: 'Immediate danger to life. Needs rapid response.', color: 'bg-red-100 text-red-800 border-red-300 animate-pulse' },
+        { id: 'LOW', desc: 'Property damage, blocked roads, non-urgent.', color: 'bg-yellow-100 text-yellow-800 border-yellow-300' },
+        { id: 'HIGH', desc: 'Injuries, active fire, major hazard.', color: 'bg-orange-100 text-orange-800 border-orange-300' },
+        { id: 'CRITICAL', desc: 'Immediate danger to life. Needs rapid response.', color: 'bg-red-100 text-red-800 border-red-300 animate-pulse' },
     ];
 
-    // Smart Guidance Mapping
     const GUIDANCE_TIPS = {
         medical: "For mass casualties, please indicate the approximate number of injured in details.",
         fire: "Ensure you are at a safe distance before reporting. Do not enter burning structures.",
@@ -218,8 +214,8 @@ const SubmitReport = () => {
         <div className="max-w-xl mx-auto py-6 px-4">
             
             <div className="mb-6 text-center">
-                <h2 className="text-2xl font-bold font-serif text-slate-900">Emergency Report</h2>
-                <p className="text-sm text-slate-500">Step {step} of 2 • <span className="text-blue-600 font-medium">{step === 1 ? 'Identify Threat' : 'Details & Location'}</span></p>
+                <h2 className="text-2xl font-bold font-serif text-slate-900">{t('report.title')}</h2>
+                <p className="text-sm text-slate-500">{t('report.step')} {step} {t('report.of')} 2 • <span className="text-blue-600 font-medium">{step === 1 ? t('report.selectThreat') : t('report.details')}</span></p>
             </div>
 
             <div className="bg-white rounded-xl shadow-lg border border-slate-200 overflow-hidden relative">
@@ -227,7 +223,7 @@ const SubmitReport = () => {
                     <div className="p-6 animate-in slide-in-from-right duration-300">
                         <h3 className="text-lg font-bold text-slate-800 mb-4 flex items-center">
                             <AlertOctagon className="w-5 h-5 mr-2 text-red-600" />
-                            What type of emergency is it?
+                            {t('report.whatType')}
                         </h3>
                         <div className="grid grid-cols-2 gap-3">
                             {Object.values(INCIDENT_TYPES).map((type) => {
@@ -265,7 +261,7 @@ const SubmitReport = () => {
 
                         {/* Severity Selector */}
                         <div>
-                            <label className="block text-sm font-bold text-slate-700 mb-3">How severe is it?</label>
+                            <label className="block text-sm font-bold text-slate-700 mb-3">{t('report.howSevere')}</label>
                             <div className="space-y-3">
                                 {SEVERITY_OPTIONS.map((level) => (
                                     <div 
@@ -285,7 +281,7 @@ const SubmitReport = () => {
                                         </div>
                                         <div className="flex-1">
                                             <div className="flex items-center justify-between">
-                                                <span className="font-bold text-sm text-slate-900">{level.label}</span>
+                                                <span className="font-bold text-sm text-slate-900">{getSeverityLabel(level.id)}</span>
                                                 <span className={cn("text-[10px] font-bold px-2 py-0.5 rounded", level.color)}>
                                                     {level.id}
                                                 </span>
@@ -300,14 +296,14 @@ const SubmitReport = () => {
                         {/* Location & Details */}
                         <div className="space-y-4">
                             <div>
-                                <label className="block text-sm font-bold text-slate-700 mb-2">Location & Details</label>
+                                <label className="block text-sm font-bold text-slate-700 mb-2">{t('report.locationDetails')}</label>
                                 <div className="flex items-center gap-3 bg-blue-50 p-3 rounded-lg text-blue-800 text-sm mb-3 border border-blue-100">
                                     <MapPin className="w-4 h-4 shrink-0" />
-                                    <span>GPS Location Detected: <strong>Connaught Place, Sector 4</strong></span>
+                                    <span>{t('report.locationDetected')}: <strong>Connaught Place, Sector 4</strong></span>
                                 </div>
                                 <textarea
                                     className="w-full p-4 border-2 border-slate-200 rounded-lg focus:border-blue-500 focus:ring-0 outline-none min-h-[100px] text-sm font-medium resize-none"
-                                    placeholder="Describe the situation briefly (optional)..."
+                                    placeholder={t('report.descriptionPlaceholder')}
                                     value={formData.description}
                                     onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
                                     required
@@ -322,11 +318,11 @@ const SubmitReport = () => {
                                 disabled={submitting}
                                 className="w-full py-4 px-6 rounded-xl bg-red-600 text-white font-bold text-lg hover:bg-red-700 active:scale-[0.98] transition-all shadow-xl shadow-red-200 disabled:opacity-70 disabled:scale-100"
                             >
-                                {submitting ? 'Transmitting Alert...' : 'SEND EMERGENCY REPORT'}
+                                {submitting ? t('report.submitting') : t('report.submit')}
                             </button>
                             <div className="mt-4 flex items-center justify-center text-xs text-slate-400 gap-1.5">
                                 <ShieldCheck className="w-3 h-3" />
-                                <span>Report will be immediately visible to nearby response units.</span>
+                                <span>{t('report.tip')}</span>
                             </div>
                         </div>
 
