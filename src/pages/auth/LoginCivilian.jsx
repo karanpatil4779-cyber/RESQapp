@@ -38,6 +38,10 @@ const LoginCivilian = () => {
             
             if (res.ok) {
                 setOtpSent(true);
+                if (data.otp) {
+                    setOtp(data.otp);
+                    setError('OTP shown below (check server console if empty)');
+                }
             } else {
                 setError(data.error || 'Failed to send OTP');
             }
