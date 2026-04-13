@@ -1,17 +1,43 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { INITIAL_INCIDENTS, INITIAL_RESOURCES, INITIAL_VOLUNTEERS } from '../data/mockData';
 
 const AppStateContext = createContext();
 
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
+
 export const AppProvider = ({ children }) => {
-  // Application State
-  const [incidents, setIncidents] = useState(INITIAL_INCIDENTS);
-  const [resources, setResources] = useState(INITIAL_RESOURCES);
-  const [volunteers, setVolunteers] = useState(INITIAL_VOLUNTEERS);
+  const [incidents, setIncidents] = useState([]);
+  const [resources, setResources] = useState([]);
+  const [volunteers, setVolunteers] = useState([]);
+  const [loading, setLoading] = useState(true);
   
-  // User State
-  const [currentUser, setCurrentUser] = useState(null); // { role, name, id, ... }
+  const [currentUser, setCurrentUser] = useState(null);
   const userRole = currentUser?.role || 'GUEST';
+
+  const fetchData = async () => {
+    try {
+      const [incidentsRes, resourcesRes, volunteersRes] = await Promise.all([
+        fetch(`${API_URL}/incidents`),
+        fetch(`${API_URL}/resources`),
+        fetch(`${API_URL}/volunteers`)
+      ]);
+      
+      const incidentsData = await incidentsRes.json();
+      const resourcesData = await resourcesRes.json();
+      const volunteersData = await volunteersRes.json();
+      
+      setIncidents(incidentsData);
+      setResources(resourcesData);
+      setVolunteers(volunteersData);
+    } catch (err) {
+      console.error('Error fetching data:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
 
   const login = (role, userData) => {
     setCurrentUser({ role, ...userData });
@@ -21,21 +47,46 @@ export const AppProvider = ({ children }) => {
     setCurrentUser(null);
   }; 
 
-  // Actions
-  const addIncident = (incident) => {
-    const newIncident = {
-      ...incident,
-      id: `inc-${Date.now()}`,
-      timestamp: new Date().toISOString(),
-      status: 'REPORTED',
-      verified: false,
-      votes: 0,
-    };
-    setIncidents(prev => [newIncident, ...prev]);
-    return newIncident;
+  const addIncident = async (incident) => {
+    try {
+      const response = await fetch(`${API_URL}/incidents`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...incident,
+          reporterPhone: currentUser?.phone
+        })
+      });
+      
+      const newIncident = await response.json();
+      setIncidents(prev => [newIncident, ...prev]);
+      return newIncident;
+    } catch (err) {
+      console.error('Error creating incident:', err);
+      const fallbackIncident = {
+        ...incident,
+        id: `inc-${Date.now()}`,
+        timestamp: new Date().toISOString(),
+        status: 'REPORTED',
+        verified: false,
+        votes: 0,
+      };
+      setIncidents(prev => [fallbackIncident, ...prev]);
+      return fallbackIncident;
+    }
   };
 
-  const updateIncidentStatus = (id, status) => {
+  const updateIncidentStatus = async (id, status) => {
+    try {
+      await fetch(`${API_URL}/incidents/${id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status, verified: true })
+      });
+    } catch (err) {
+      console.error('Error updating incident:', err);
+    }
+    
     setIncidents(prev => prev.map(inc => 
       inc.id === id ? { ...inc, status } : inc
     ));
@@ -51,7 +102,6 @@ export const AppProvider = ({ children }) => {
     ));
   };
 
-  // Metrics (Derived State)
   const stats = {
     active: incidents.filter(i => i.status !== 'RESOLVED').length,
     critical: incidents.filter(i => i.severity === 'CRITICAL' && i.status !== 'RESOLVED').length,
@@ -64,6 +114,7 @@ export const AppProvider = ({ children }) => {
     resources,
     volunteers,
     userRole,
+    loading,
 
     addIncident,
     updateIncidentStatus,
@@ -73,6 +124,7 @@ export const AppProvider = ({ children }) => {
     currentUser,
     login,
     logout,
+    refreshData: fetchData,
   };
 
   return (

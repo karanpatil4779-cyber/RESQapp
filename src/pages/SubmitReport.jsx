@@ -123,7 +123,7 @@ const SuccessToast = ({ onClose, onNavigate }) => {
 
 const SubmitReport = () => {
     const navigate = useNavigate();
-    const { addIncident } = useAppState();
+    const { addIncident, currentUser } = useAppState();
     const [step, setStep] = useState(1);
     const [submitting, setSubmitting] = useState(false);
     const [showSuccess, setShowSuccess] = useState(false);
@@ -160,16 +160,15 @@ const SubmitReport = () => {
         e.preventDefault();
         setSubmitting(true);
         
-        // Simulate network delay
         setTimeout(() => {
             addIncident({
-                type: formData.type.toUpperCase(), // Using ID as type for now
+                type: formData.type.toUpperCase(),
                 severity: formData.severity,
                 description: formData.description,
                 lat: 28.6139 + (Math.random() - 0.5) * 0.01,
                 lng: 77.2090 + (Math.random() - 0.5) * 0.01,
                 locationName: 'Detected Location (GPS)',
-                reporterId: 'current-user',
+                reporterId: currentUser?.id || 'guest-user',
             });
             setSubmitting(false);
             setShowSuccess(true); // Show success toast popup
