@@ -1,7 +1,8 @@
 {
   "app": {
     "name": "ResQLink",
-    "tagline": "Emergency Response System"
+    "tagline": "Emergency Response System",
+    "missionControl": "Mission Control"
   },
   "nav": {
     "dashboard": "Dashboard",
@@ -14,6 +15,8 @@
   "login": {
     "title": "ResQLink Public Access",
     "subtitle": "We are here to help. Sign in to report incidents or track status.",
+    "selectRole": "Select your operational role to enter the secure command environment.",
+    "footer": "V2.4.0 // SYSTEM OPERATIONAL // SECURE CONNECTION",
     "phoneLabel": "Mobile Number",
     "phonePlaceholder": "+91 98765 43210",
     "getOtp": "Get OTP Code",
@@ -24,6 +27,20 @@
     "emergencyNote": "In a life-threatening emergency, always call 112 or your local emergency number first.",
     "changeNumber": "Change number",
     "serverUrl": "Server URL (for development)"
+  },
+  "roles": {
+    "agency": {
+      "title": "Agency Command",
+      "subtitle": "Coordinate response, manage resources, and control operations."
+    },
+    "volunteer": {
+      "title": "Volunteer Unit",
+      "subtitle": "Assist on ground, deliver logistics, and update mission status."
+    },
+    "civilian": {
+      "title": "Civilian Access",
+      "subtitle": "Report emergencies, request immediate aid, and track status."
+    }
   },
   "report": {
     "title": "Emergency Report",

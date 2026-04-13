@@ -1,9 +1,9 @@
 export const INCIDENT_TYPES = {
-  FLOOD: { id: 'flood', label: 'Flood', icon: 'Droplets', color: 'bg-blue-500' },
-  FIRE: { id: 'fire', label: 'Fire', icon: 'Flame', color: 'bg-orange-500' },
-  MEDICAL: { id: 'medical', label: 'Medical Emergency', icon: 'HeartPulse', color: 'bg-red-600' },
-  SUPPLY: { id: 'supply', label: 'Food/Water Shortage', icon: 'Package', color: 'bg-yellow-500' },
-  INFRASTRUCTURE: { id: 'infrastructure', label: 'Infrastructure Damage', icon: 'TriangleAlert', color: 'bg-slate-600' },
+  FLOOD: { id: 'flood', translationKey: 'incidentTypes.flood', icon: 'Droplets', color: 'bg-blue-500' },
+  FIRE: { id: 'fire', translationKey: 'incidentTypes.fire', icon: 'Flame', color: 'bg-orange-500' },
+  MEDICAL: { id: 'medical', translationKey: 'incidentTypes.medical', icon: 'HeartPulse', color: 'bg-red-600' },
+  SUPPLY: { id: 'supply', translationKey: 'incidentTypes.supply', icon: 'Package', color: 'bg-yellow-500' },
+  INFRASTRUCTURE: { id: 'infrastructure', translationKey: 'incidentTypes.infrastructure', icon: 'TriangleAlert', color: 'bg-slate-600' },
 };
 
 export const SEVERITY_LEVELS = {

@@ -132,7 +132,10 @@ const SubmitReport = () => {
 
 
     const getSeverityLabel = (id) => t(`severity.${id}`) || id;
-    const getIncidentLabel = (id) => t(`incidentTypes.${id}`) || id;
+    const getIncidentLabel = (typeId) => {
+        const type = INCIDENT_TYPES[typeId.toUpperCase()];
+        return type ? t(type.translationKey) : typeId;
+    };
 
     const SEVERITY_OPTIONS = [
         { id: 'LOW', desc: 'Property damage, blocked roads, non-urgent.', color: 'bg-yellow-100 text-yellow-800 border-yellow-300' },
@@ -237,7 +240,7 @@ const SubmitReport = () => {
                                         <div className={cn("p-4 rounded-full text-white transition-transform group-hover:scale-110", type.color)}>
                                             <Icon className="w-8 h-8" />
                                         </div>
-                                        <span className="font-bold text-slate-700 group-hover:text-red-700">{type.label}</span>
+                                        <span className="font-bold text-slate-700 group-hover:text-red-700">{t(type.translationKey)}</span>
                                     </button>
                                 );
                             })}
@@ -250,7 +253,7 @@ const SubmitReport = () => {
                         
                         {/* Selected Type Badge */}
                         <div className="flex items-center justify-between bg-slate-50 p-3 rounded-lg border border-slate-200">
-                            <span className="text-sm text-slate-500 font-medium">Selected: <strong className="text-slate-900">{INCIDENT_TYPES[formData.type]?.label}</strong></span>
+                            <span className="text-sm text-slate-500 font-medium">Selected: <strong className="text-slate-900">{getIncidentLabel(formData.type)}</strong></span>
                             <button type="button" onClick={() => setStep(1)} className="text-xs text-blue-600 font-bold hover:underline">CHANGE</button>
                         </div>
 

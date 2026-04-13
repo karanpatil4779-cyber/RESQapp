@@ -1,8 +1,10 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppState } from '../../context/AppStateContext';
+import { useLanguage } from '../../context/LanguageContext';
 import { Shield, HeartHandshake, MapPin } from 'lucide-react';
 import ChatBot from '../../components/chatbot/ChatBot';
+import LanguageSwitcher from '../../components/LanguageSwitcher';
 
 const RoleCard = ({ icon: Icon, title, subtitle, color, onClick }) => (
     <button 
@@ -23,6 +25,7 @@ const RoleCard = ({ icon: Icon, title, subtitle, color, onClick }) => (
 const LoginSelection = () => {
     const navigate = useNavigate();
     const { currentUser } = useAppState();
+    const { t } = useLanguage();
 
     useEffect(() => {
         if (currentUser) {
@@ -46,40 +49,43 @@ const LoginSelection = () => {
                          <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center shadow-lg shadow-blue-500/30">
                             <Shield className="w-6 h-6 text-white" />
                         </div>
-                        <h1 className="text-3xl md:text-4xl font-black text-white tracking-tight">ResQLink <span className="text-blue-500">Mission Control</span></h1>
+                        <h1 className="text-3xl md:text-4xl font-black text-white tracking-tight">ResQLink <span className="text-blue-500">{t('app.missionControl')}</span></h1>
                     </div>
                     <p className="text-slate-400 text-lg max-w-2xl font-light">
-                        Select your operational role to enter the secure command environment.
+                        {t('login.selectRole')}
                     </p>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-5xl">
                     <RoleCard 
                         icon={Shield}
-                        title="Agency Command"
-                        subtitle="Coordinate response, manage resources, and control operations."
+                        title={t('roles.agency.title')}
+                        subtitle={t('roles.agency.subtitle')}
                         color="text-blue-400 shadow-blue-500/50"
                         onClick={() => navigate('/login/agency')}
                     />
                     <RoleCard 
                         icon={HeartHandshake}
-                        title="Volunteer Unit"
-                        subtitle="Assist on ground, deliver logistics, and update mission status."
+                        title={t('roles.volunteer.title')}
+                        subtitle={t('roles.volunteer.subtitle')}
                         color="text-green-400 shadow-green-500/50"
                         onClick={() => navigate('/login/volunteer')}
                     />
                     <RoleCard 
                         icon={MapPin}
-                        title="Civilian Access"
-                        subtitle="Report emergencies, request immediate aid, and track status."
+                        title={t('roles.civilian.title')}
+                        subtitle={t('roles.civilian.subtitle')}
                         color="text-amber-400 shadow-amber-500/50"
                         onClick={() => navigate('/login/civilian')}
                     />
                 </div>
 
                 <div className="text-xs text-slate-600 font-mono pt-8">
-                    V2.4.0 // SYSTEM OPERATIONAL // SECURE CONNECTION
+                    {t('login.footer')}
                 </div>
+            </div>
+            <div className="absolute top-4 right-4">
+                <LanguageSwitcher />
             </div>
             {/* ChatBot available on login page for emergency access */}
             <ChatBot />
