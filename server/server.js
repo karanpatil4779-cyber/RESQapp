@@ -299,6 +299,12 @@ app.post('/api/auth/send-otp', async (req, res) => {
     otpStore.set(phone, { otp, expiresAt: Date.now() + 5 * 60 * 1000 });
     
     const message = `Your ResQLink verification code is: ${otp}. Valid for 5 minutes.`;
+    
+    if (!client) {
+      console.log(`\n============ OTP for ${phone}: ${otp} ============`);
+      return res.json({ success: true, message: 'OTP sent (check server console)', otp });
+    }
+    
     await sendSMS(message, phone);
     
     res.json({ success: true, message: 'OTP sent' });
