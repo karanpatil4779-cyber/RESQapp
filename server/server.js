@@ -10,14 +10,14 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-});
+const pool = process.env.DATABASE_URL 
+  ? new Pool({ connectionString: process.env.DATABASE_URL })
+  : null;
 
-const client = twilio(
-  process.env.TWILIO_ACCOUNT_SID,
-  process.env.TWILIO_AUTH_TOKEN
-);
+let client = null;
+if (process.env.TWILIO_ACCOUNT_SID && process.env.TWILIO_AUTH_TOKEN) {
+  client = twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
+}
 
 const ADMIN_PHONE = process.env.ADMIN_PHONE || '+919999999999';
 const ADMIN_WHATSAPP = process.env.ADMIN_WHATSAPP || 'whatsapp:+919999999999';
@@ -29,6 +29,11 @@ function generateOTP() {
 }
 
 async function initDatabase() {
+  if (!pool) {
+    console.log('No database configured, skipping DB initialization');
+    return;
+  }
+  
   const createTables = `
     CREATE TABLE IF NOT EXISTS users (
       id SERIAL PRIMARY KEY,
@@ -97,6 +102,10 @@ async function initDatabase() {
 }
 
 async function sendSMS(message, toPhone) {
+  if (!client) {
+    console.log('Twilio not configured, skipping SMS. Message:', message);
+    return null;
+  }
   try {
     const result = await client.messages.create({
       body: message,
@@ -156,6 +165,18 @@ async function notifyReporter(incident) {
 }
 
 app.post('/api/incidents', async (req, res) => {
+  if (!pool) {
+    console.log('No database configured, returning mock incident');
+    const mockIncident = {
+      id: Date.now(),
+      type: req.body.type,
+      severity: req.body.severity,
+      description: req.body.description,
+      external_id: `inc-${Date.now()}`
+    };
+    return res.status(201).json(mockIncident);
+  }
+  
   try {
     const { type, severity, description, lat, lng, locationName, reporterId, reporterPhone } = req.body;
     
