@@ -1,88 +1,371 @@
-# ResQLink (Evaluation Build: Elite)
+# ResQLink - Crisis Response Coordination Platform
 
 > **"Command, Clarity, Coordination."**
 
-ResQLink is a next-generation crisis response operating system. It bridges the gap between distress and relief by providing a unified, role-aware "Mission Control" for agencies, volunteers, and civilians.
-
-![ResQLink Mission Control](public/mission_control_preview.png)
-
-## 🌟 Elite Project Highlights
-
-This build features the **"Elite Project"** refinements—a comprehensive UX overhaul designed for high-stakes decision making.
-
-### 🛡️ Mission Control (Role-Based Access)
-
-A dedicated "Mission Entry" screen securely routes users to their specific operational view:
-
-- **Agency Command**: For strategic oversight, resource allocation, and simulation controls.
-- **Volunteer Unit**: For on-ground task management and logistics delivery.
-- **Civilian Access**: For rapid SOS reporting and status tracking.
-
-### 🧠 Operational Intelligence
-
-- **AI-Powered Insights**: The analytics dashboard uses AI callouts to highlight bottlenecks (e.g., "Medical Supply Critical in Sector 4").
-- **Predictive Logistics**: Real-time alerts forecast resource shortages before they happen.
-- **Confidence Scores**: Incident reports display AI verification levels (e.g., "98% Verified") to reduce misinformation.
-
-### �️ Advanced Tactical Map
-
-- **Drill-Down Drawers**: Interactive drawers allow commanders to inspect individual incident timelines without leaving the map.
-- **Dynamic Layers**: Toggleable overlays for "Population Density", "Flood Zones", and "Active Units".
-- **Visual Clarity**: Critical incidents pulse on the map to draw immediate attention.
-
-## 🚀 Key Features
-
-### 🖥️ The Command Rail
-
-Replaces traditional navigation with a tactical "Command Rail" header, featuring:
-
-- **System Heartbeat**: Visual indicator of system uptime.
-- **Sync Timer**: Real-time data synchronization status.
-- **Global Alert Ticker**: Scrolling urgency notifications.
-
-### 🆘 Smart Reporting
-
-- **Context-Aware Guidance**: The SOS form suggests details based on the selected emergency type (e.g., "Fire" -> "Distance from structure?").
-- **Reassurance UX**: Immediate visual feedback confirms that specific nearby units have notified.
-
-### ⚙️ Admin Simulation
-
-- **Scenario Triggers**: Admins can trigger simulated events (e.g., "Flood Surge", "Supply Collapse") to test system resilience during demos.
-
-## 🛠️ Tech Stack
-
-- **Framework**: React.js + Vite
-- **State Management**: React Context API (Role-Aware)
-- **Styling**: Tailwind CSS (Custom "Mission Dark" & "Signal" Themes)
-- **Maps**: Leaflet + React-Leaflet
-- **Visuals**: Lucide React Icons + Recharts
-
-## ⚡ Getting Started
-
-1.  **Clone the repository**
-
-    ```bash
-    git clone https://github.com/yourusername/resqlink.git
-    cd resqlink
-    ```
-
-2.  **Install dependencies**
-
-    ```bash
-    npm install
-    ```
-
-3.  **Start the Mission Control**
-    ```bash
-    npm run dev
-    ```
-
-## 🎨 Design Philosophy
-
-- **Cognitive Load Reduction**: Interfaces are designed to be scanned in milliseconds.
-- **Semantic Color Theory**: Strict adherence to Red (Critical), Blue (Operational), and Amber (Warning).
-- **Hierarchy first**: The most important data is always the largest and brightest element on screen.
+A real-time disaster response coordination platform connecting agencies, volunteers, and civilians during emergencies.
 
 ---
 
-_ResQLink Elite: Engineering order out of chaos._
+## 📋 Table of Contents
+
+1. [Tech Stack](#tech-stack)
+2. [Project Structure](#project-structure)
+3. [Database Setup](#database-setup)
+4. [Backend API](#backend-api)
+5. [Frontend Features](#frontend-features)
+6. [Deployment Guide](#deployment-guide)
+7. [Environment Variables](#environment-variables)
+8. [Running Locally](#running-locally)
+
+---
+
+## 🛠️ Tech Stack
+
+### Frontend
+| Technology | Purpose |
+|------------|---------|
+| **React 18** | UI Framework |
+| **Vite** | Build tool & dev server |
+| **Tailwind CSS** | Styling (with dark mode) |
+| **React Router** | Navigation |
+| **React-Leaflet** | Interactive maps |
+| **Recharts** | Analytics charts |
+| **Lucide React** | Icons |
+| **Framer Motion** | Animations |
+
+### Backend
+| Technology | Purpose |
+|------------|---------|
+| **Node.js** | Runtime |
+| **Express.js** | API Framework |
+| **PostgreSQL** | Database |
+| **pg** | PostgreSQL client |
+| **Twilio** | SMS/WhatsApp notifications |
+| **dotenv** | Environment config |
+
+### Deployment
+| Service | Purpose |
+|---------|---------|
+| **Vercel** | Frontend hosting |
+| **Render** | Backend API hosting |
+| **Neon** | PostgreSQL database |
+
+---
+
+## 📂 Project Structure
+
+```
+ResQLink/
+├── src/                          # Frontend source
+│   ├── components/
+│   │   ├── layout/
+│   │   │   ├── Header.jsx        # Top navigation bar with stats & theme toggle
+│   │   │   ├── Sidebar.jsx       # Left navigation menu
+│   │   │   └── Layout.jsx        # Main layout wrapper
+│   │   ├── chatbot/
+│   │   │   └── ChatBot.jsx       # Emergency assistance chatbot
+│   │   ├── dashboard/
+│   │   │   └── MapWidget.jsx     # Leaflet map component
+│   │   ├── LanguageSwitcher.jsx # Multi-language selector
+│   │   └── ...
+│   ├── pages/
+│   │   ├── auth/
+│   │   │   ├── LoginSelection.jsx   # Role selection screen
+│   │   │   ├── LoginAgency.jsx      # Agency login
+│   │   │   ├── LoginVolunteer.jsx  # Volunteer login
+│   │   │   └── LoginCivilian.jsx   # Civilian login
+│   │   ├── DashboardHome.jsx    # Main dashboard
+│   │   ├── CrisisMap.jsx        # Tactical map view
+│   │   ├── SubmitReport.jsx     # Incident reporting form
+│   │   ├── Resources.jsx        # Resource management
+│   │   ├── Analytics.jsx        # Data analytics
+│   │   ├── AdminPanel.jsx       # Admin controls
+│   │   └── CrisisMap.jsx        # Full-screen map
+│   ├── context/
+│   │   ├── AppStateContext.jsx  # Global state (incidents, users, resources)
+│   │   └── LanguageContext.jsx  # i18n language state
+│   ├── data/
+│   │   └── mockData.js          # Static data definitions
+│   ├── locales/                 # Translation files
+│   │   ├── en.json              # English
+│   │   ├── hi.json              # Hindi
+│   │   ├── gu.json              # Gujarati
+│   │   └── mr.json              # Marathi
+│   ├── lib/
+│   │   ├── utils.js             # Utility functions
+│   │   └── i18n.js              # i18n configuration
+│   ├── App.jsx                  # Main app component
+│   ├── main.jsx                 # Entry point
+│   └── index.css                # Global styles
+│
+├── server/                       # Backend API
+│   ├── server.js                # Express server with all endpoints
+│   ├── package.json             # Backend dependencies
+│   └── .env.example             # Example environment config
+│
+├── public/                      # Static assets
+├── tailwind.config.js           # Tailwind configuration
+├── vite.config.js               # Vite configuration
+├── package.json                 # Frontend dependencies
+└── README.md                    # This file
+```
+
+---
+
+## 🗄️ Database Setup
+
+### Database: Neon (PostgreSQL)
+
+We use **Neon** - a serverless PostgreSQL platform with free tier.
+
+#### Connection String Format
+```
+postgresql://username:password@host.neon.tech/dbname?sslmode=require
+```
+
+#### Tables Created (Auto-generated by server)
+
+```sql
+-- Users table
+CREATE TABLE users (
+  id SERIAL PRIMARY KEY,
+  phone VARCHAR(20) UNIQUE NOT NULL,
+  name VARCHAR(100),
+  role VARCHAR(20) DEFAULT 'CIVILIAN',
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Incidents table
+CREATE TABLE incidents (
+  id SERIAL PRIMARY KEY,
+  external_id VARCHAR(50) UNIQUE,
+  type VARCHAR(50) NOT NULL,
+  severity VARCHAR(20) NOT NULL,
+  status VARCHAR(20) DEFAULT 'REPORTED',
+  description TEXT,
+  lat FLOAT,
+  lng FLOAT,
+  location_name VARCHAR(255),
+  reporter_phone VARCHAR(20),
+  reporter_id VARCHAR(50),
+  verified BOOLEAN DEFAULT FALSE,
+  votes INTEGER DEFAULT 0,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Resources table
+CREATE TABLE resources (
+  id SERIAL PRIMARY KEY,
+  type VARCHAR(100) NOT NULL,
+  quantity INTEGER,
+  unit VARCHAR(20),
+  lat FLOAT,
+  lng FLOAT,
+  status VARCHAR(20) DEFAULT 'AVAILABLE',
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Volunteers table
+CREATE TABLE volunteers (
+  id SERIAL PRIMARY KEY,
+  name VARCHAR(100) NOT NULL,
+  status VARCHAR(20) DEFAULT 'AVAILABLE',
+  lat FLOAT,
+  lng FLOAT,
+  current_task_id VARCHAR(50),
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Notifications table
+CREATE TABLE notifications (
+  id SERIAL PRIMARY KEY,
+  incident_id INTEGER,
+  phone VARCHAR(20),
+  channel VARCHAR(20),
+  status VARCHAR(20) DEFAULT 'SENT',
+  twilio_sid VARCHAR(100),
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+```
+
+---
+
+## 🌐 Backend API
+
+### Base URL
+```
+https://resqlink-backend.onrender.com/api
+```
+
+### Endpoints
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/incidents` | Get all incidents |
+| POST | `/incidents` | Create new incident |
+| GET | `/incidents/:id` | Get single incident |
+| PATCH | `/incidents/:id` | Update incident status |
+| GET | `/resources` | Get all resources |
+| GET | `/volunteers` | Get all volunteers |
+| GET | `/stats` | Get dashboard statistics |
+| POST | `/users` | Create/update user |
+| POST | `/auth/send-otp` | Send OTP for login |
+| POST | `/auth/verify-otp` | Verify OTP and login |
+
+### How Frontend Connects to Backend
+
+```javascript
+// In src/context/AppStateContext.jsx
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
+
+// Example API call
+const response = await fetch(`${API_URL}/incidents`);
+const data = await response.json();
+```
+
+---
+
+## 💻 Frontend Features
+
+### 1. Role-Based Access Control
+- **Agency** - Command center, analytics, admin controls
+- **Volunteer** - Resources, map, response tasks
+- **Civilian** - Report incidents, view status
+
+### 2. Dark/Light Theme
+- Toggle in header (sun/moon icon)
+- Persisted in localStorage
+- Full dark mode support across all pages
+
+### 3. Multi-Language Support
+- English, Hindi, Gujarati, Marathi
+- Language switcher in header
+- All UI text translated
+
+### 4. Interactive Map
+- Leaflet-based tactical map
+- Incident markers with severity colors
+- Resource & volunteer locations
+
+### 5. Real-time Dashboard
+- Active incident counts
+- Critical event alerts
+- Live operations feed
+
+### 6. Emergency Chatbot
+- 24/7 emergency assistance
+- Quick access to helplines
+- Navigate to specific pages
+
+---
+
+## 🚀 Deployment Guide
+
+### Frontend (Vercel)
+
+1. Push code to GitHub
+2. Go to [vercel.com](https://vercel.com)
+3. Import your repository
+4. Add environment variables:
+   - `VITE_API_URL` = your Render backend URL (e.g., `https://resqlink-backend.onrender.com/api`)
+5. Deploy!
+
+### Backend (Render)
+
+1. Go to [render.com](https://render.com)
+2. Create new "Web Service"
+3. Connect your GitHub repo (select the `server` folder)
+4. Configure:
+   - **Build Command**: `npm install`
+   - **Start Command**: `npm start`
+5. Add environment variables:
+   - `DATABASE_URL` = Neon connection string
+   - `TWILIO_ACCOUNT_SID` = Your Twilio SID
+   - `TWILIO_AUTH_TOKEN` = Your Twilio token
+   - `TWILIO_PHONE_NUMBER` = Your Twilio phone
+   - `ADMIN_PHONE` = Admin notification number
+6. Deploy!
+
+### Database (Neon)
+
+1. Go to [neon.tech](https://neon.tech)
+2. Create free project
+3. Copy connection string
+4. Use in both Vercel and Render
+
+---
+
+## 🔑 Environment Variables
+
+### Frontend (.env.local)
+```env
+VITE_API_URL=https://your-render-url.onrender.com/api
+```
+
+### Backend (server/.env)
+```env
+# Database (PostgreSQL on Neon)
+DATABASE_URL=postgresql://user:pass@host.neon.tech/dbname?sslmode=require
+
+# Twilio (SMS/WhatsApp)
+TWILIO_ACCOUNT_SID=your_sid
+TWILIO_AUTH_TOKEN=your_token
+TWILIO_PHONE_NUMBER=+1234567890
+
+# Admin notifications
+ADMIN_PHONE=+919999999999
+ADMIN_WHATSAPP=whatsapp:+919999999999
+
+# Server port
+PORT=3001
+```
+
+---
+
+## 🏃 Running Locally
+
+### Frontend
+```bash
+npm install
+npm run dev
+```
+Open http://localhost:5173
+
+### Backend
+```bash
+cd server
+npm install
+npm run dev
+```
+Server runs on http://localhost:3001
+
+### Full Stack (with database)
+1. Create Neon database
+2. Add DATABASE_URL to server/.env
+3. Run both frontend and backend
+
+---
+
+## 📱 Key Features Summary
+
+- ✅ Real-time incident reporting
+- ✅ Interactive crisis map
+- ✅ Resource & volunteer tracking
+- ✅ Role-based dashboards
+- ✅ Analytics & insights
+- ✅ Dark/Light theme
+- ✅ Multi-language (EN, HI, GU, MR)
+- ✅ Emergency chatbot
+- ✅ SMS/WhatsApp notifications
+- ✅ OTP-based authentication
+
+---
+
+## 📄 License
+
+MIT License - Feel free to use and modify!
+
+---
+
+_ResQLink: Engineering order out of chaos._
